@@ -1,0 +1,4 @@
+EasyPySpin
+opencv-python
+numpy
+tkinter
