@@ -1,5 +1,5 @@
 {
   "default_framerate": 25,
-  "default_compression": "MJPG",
+  "default_compression": "H264",
   "default_save_directory": ""
 }

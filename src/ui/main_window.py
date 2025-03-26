@@ -47,12 +47,13 @@ class MainWindow(QtWidgets.QWidget):
         with open(config_path, 'r') as f:
             self.settings = json.load(f)
             
-        self.save_directory = self.settings.get('default_save_directory', '/Users\Hannah\Documents\SpinVideo')
+        # Use forward slashes for paths to avoid issues
+        self.save_directory = self.settings.get('default_save_directory', '')
         self.camera_controller = CameraController()
         self.video_recorder = VideoRecorder(
             output_directory=self.save_directory,
             framerate=self.settings.get('default_framerate', 25),
-            codec=self.settings.get('default_compression', 'MJPG'),
+            codec=self.settings.get('default_compression', 'H264'),
             feed_width=self.feed_width,
             feed_height=self.feed_height
         )
@@ -85,9 +86,9 @@ class MainWindow(QtWidgets.QWidget):
         self.layout.addWidget(self.compression_label)
 
         self.compression_input = QtWidgets.QComboBox()
-        self.compression_input.addItems(["XVID", "MJPG", "X264", "DIVX"])
+        self.compression_input.addItems(["H264", "XVID", "MJPG", "DIVX"])
         # Set default from settings
-        default_compression = self.settings.get('default_compression', 'MJPG')
+        default_compression = self.settings.get('default_compression', 'H264')
         index = self.compression_input.findText(default_compression)
         if index >= 0:
             self.compression_input.setCurrentIndex(index)
@@ -99,7 +100,7 @@ class MainWindow(QtWidgets.QWidget):
         self.filename_input = QtWidgets.QLineEdit()
         # Set default filename with timestamp
         timestamp = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd_hhmmss')
-        self.filename_input.setText(f"recording_{timestamp}.avi")
+        self.filename_input.setText(f"recording_{timestamp}.mp4")
         
         self.filename_layout.addWidget(self.filename_label)
         self.filename_layout.addWidget(self.filename_input)
@@ -166,7 +167,11 @@ class MainWindow(QtWidgets.QWidget):
             
             # If recording, pass original frame to video recorder
             if self.video_recorder.is_recording_active():
-                self.video_recorder.record_frame(frame)  # Use original frame for recording
+                # Use original frame for recording, error handling is inside record_frame method
+                success = self.video_recorder.record_frame(frame)
+                if not success:
+                    # This will only print to console - could add UI indicator if needed
+                    print("Failed to record frame")
 
     def browse_directory(self):
         dir_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory", self.save_directory)
@@ -181,12 +186,12 @@ class MainWindow(QtWidgets.QWidget):
         if not filename:
             # If empty, generate default filename
             timestamp = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd_hhmmss')
-            filename = f"recording_{timestamp}.avi"
+            filename = f"recording_{timestamp}.mp4"
             self.filename_input.setText(filename)
         
-        # Ensure filename ends with .avi
-        if not filename.lower().endswith('.avi'):
-            filename += '.avi'
+        # Ensure filename ends with .mp4
+        if not filename.lower().endswith('.mp4'):
+            filename += '.mp4'
             self.filename_input.setText(filename)
         
         framerate = self.framerate_input.value()
@@ -200,9 +205,14 @@ class MainWindow(QtWidgets.QWidget):
         self.video_recorder.feed_height = self.feed_height
         
         # Start recording with user-specified filename
-        self.video_recorder.start_recording(filename)
-        self.start_button.setEnabled(False)
-        self.stop_button.setEnabled(True)
+        success = self.video_recorder.start_recording(filename)
+        if success:
+            self.start_button.setEnabled(False)
+            self.stop_button.setEnabled(True)
+        else:
+            # Show error message to user
+            QtWidgets.QMessageBox.critical(self, "Recording Error", 
+                                         "Failed to start recording. Please check codec and file path.")
         
         # Handle auto-stop if enabled
         if self.duration_check.isChecked():
