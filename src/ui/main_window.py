@@ -6,6 +6,11 @@ import cv2
 from camera_controller import CameraController
 from video_recorder import VideoRecorder
 
+# Add lib directory to PATH at runtime
+lib_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'lib')
+if lib_path not in os.environ['PATH']:
+    os.environ['PATH'] = lib_path + os.pathsep + os.environ['PATH']
+
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()

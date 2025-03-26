@@ -39,6 +39,15 @@ camera-recording-app
    ```
    pip install -r requirements.txt
    ```
+4. Add the lib directory to your system PATH:
+   Right-click on Start → System
+   Click "Advanced system settings"
+   Click "Environment Variables"
+   Under "System variables", find and select "Path"
+   Click "Edit"
+   Click "New"
+   Add c:yourdirectory\camera-recording-app\lib
+   Click "OK" on all windows
 
 ## Usage
 1. Run the application:

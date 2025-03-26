@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 import sys
 from PyQt5.QtWidgets import QApplication
 from ui.main_window import MainWindow
