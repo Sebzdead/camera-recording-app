@@ -3,7 +3,7 @@ import os
 import time
 
 class VideoRecorder:
-    def __init__(self, output_directory, framerate=30, codec='XVID'):
+    def __init__(self, output_directory, framerate=25, codec='MJPG'):
         self.output_directory = output_directory
         self.framerate = framerate
         self.codec = codec

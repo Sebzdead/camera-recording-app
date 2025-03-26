@@ -1,5 +1,5 @@
 {
   "default_framerate": 30,
-  "default_compression": "XVID",
+  "default_compression": "MJPG",
   "default_save_directory": "/Users/sebastian/Videos"
 }
