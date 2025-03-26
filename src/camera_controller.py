@@ -4,8 +4,8 @@ class CameraController:
     def __init__(self, camera_index=0):
         import EasyPySpin
         self.camera = EasyPySpin.VideoCapture(camera_index)
-        self.framerate = 30  # Default framerate
-        self.compression = 'XVID'  # Default compression
+        self.framerate = 25  # Default framerate
+        self.compression = 'MJPG'  # Default compression
         self.is_recording = False
         
         # Initialize the camera with default settings
